@@ -32,6 +32,7 @@ FitSimpler <- function(data, dist.matrix, cov.model, cov.pars, p,
                      cov.model = cov.model, logpars = logpars, 
                      control = list(fnscale = -1),
                      method=method, hessian = hessian)))
+    return(list(time_Simpler = time_Simpler, est_Simpler = est_Simpler))
   }
   
   if(ncov.model == 1 && (p > 1)) ## ncol(data) > 1
@@ -44,9 +45,10 @@ FitSimpler <- function(data, dist.matrix, cov.model, cov.pars, p,
                      cov.model = cov.model, logpars = logpars, p = p,
                      control = list(fnscale = -1),
                      method=method, hessian = hessian)))
+    return(list(time_Simpler = time_Simpler, est_Simpler = est_Simpler))
   }
   
-  if((ncov.model > 1) && (p > 1)) ## ncol(data) > 1
+  if((ncov.model > 1) && (p > 1) && (ncov.model == p)) ## ncol(data) > 1
   {
     ini_par <- c(unlist(cov.pars), gdata::upperTriangle(SigmaB, byrow = T))
 
@@ -62,8 +64,7 @@ FitSimpler <- function(data, dist.matrix, cov.model, cov.pars, p,
       est_Simpler$par <- c(exp(est_Simpler$par[1:sum(nparam[1:p])]), 
                            tanh(est_Simpler$par[(sum(nparam[1:p])+1):length(est_Simpler$par)]))
     }
-    
+    return(list(time_Simpler = time_Simpler, est_Simpler = est_Simpler))
   }
-  
-  return(list(time_Simpler = time_Simpler, est_Simpler = est_Simpler))
+  return("error: wrong model specification")
 }

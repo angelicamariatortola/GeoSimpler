@@ -13,6 +13,7 @@ loglikSimpler_optim_multicov_pmulti <- function(par, data, dist.matrix, p,
   ## função de uso interno
   ## Multivariate scenario, com modelos distintos de covariância para as respostas
   ## --> ncov.model > 1 && (ncol(data) > 1)
+  ## SigmaB != NULL
   
   ## par --> vetor com todos os parametros.
   # Ex: c(param_var1, param_va2,..., rho12, rho13, ...)

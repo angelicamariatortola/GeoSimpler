@@ -19,6 +19,8 @@ grfSimpler <- function(n, nsim, cov.model, cov.pars, SigmaB = NULL)
   ## SigmaB --> (opcional) matriz de correlação de dimensão pxp, 
   #  necessária se p=length(cov.model) > 1
   
+  ## INCOMPLETA
+  
   p <- length(cov.model) ## número de variáveis
   
   # rseed <- set.seed(...)

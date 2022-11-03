@@ -13,53 +13,45 @@ U <- as.matrix(dist(coord, diag = TRUE, upper = TRUE))
 
 #### Testes função CovSimpler
 
-# ## Covariancia univariada:
+# ## Covariancia univariada: length(cov.model)==1 && (p == 1)
 cov_marg(dist.matrix = U, cov.model = "matern",
          cov.pars.uni = c(2,0.2,0.7))
 
 CovSimpler(dist.matrix = U, cov.model = "matern",
-           cov.pars = list(c(2,0.2,0.7)))
+           cov.pars = list(c(2,0.2,0.7)), p=1)
 
-# is.positive.definite(CovSimpler(dist.matrix = U, cov.model = "gaussian",
-#            cov.pars = list(c(1,0.25))))
  
-# ## Covariancia Bivariada:
+# ## Covariancia Bivariada: mesma correlação para variáveis diferentes
+cov.model = c("matern")
+CovSimpler(dist.matrix = U, cov.model = cov.model,
+           cov.pars = list(c(1,0.2,0.7)), 
+           SigmaB = matrix(c(1,0.9,
+                             0.9,1),nc = 2), p = 2)
+
+
+# ## Covariancia Bivariada: correlações diferentes
 cov.model = c("matern", "matern")
 CovSimpler(dist.matrix = U, cov.model = cov.model,
            cov.pars = list(c(1,0.2,0.7),c(3,0.2,0.701)), 
            SigmaB = matrix(c(1,0.9,
-                             0.9,1),nc = 2))
+                             0.9,1),nc = 2), p =2)
 
 
-## Covariancia Tri-variada - funções de correlação diferentes:       
-cov.model = c("matern", "matern", "matern")
-cov.pars = list(c(1,0.2,0.7), c(2,0.21,0.7),c(3,0.22,0.7))
+## Covariancia Tri-variada: mesma correlação para variáveis diferentes    
+cov.model = c("matern")
+cov.pars = list(c(1,0.2,0.7))
 
-system.time(cov_tri1 <- CovSimpler(dist.matrix = U, cov.model = cov.model,
-                                   cov.pars = cov.pars,  SigmaB = matrix(c(1,0.5,0.7,
-                                                                           0.5,1,0.8,
-                                                                           0.7,0.8,1),nc = 3)))
-
-system.time(cov_tri2 <- CovSimpler(dist.matrix = U, cov.model = cov.model,
-                                   cov.pars = cov.pars,  SigmaB = matrix(c(1,0.5,0.7,
-                                                                           0.5,1,0.8,
-                                                                           0.7,0.8,1),nc = 3)))
+CovSimpler(dist.matrix = U, cov.model = cov.model, p = 3,
+           cov.pars = cov.pars,  SigmaB = matrix(c(1,0.5,0.7,
+                                                   0.5,1,0.8,
+                                                   0.7,0.8,1),nc = 3))
 
 
-## Covariancia Tri-variada - funções de correlação iguais:                                                            
-CovSimpler(dist.matrix = U, cov.model = c("matern", "matern", "matern"),
-           cov.pars = list(c(1.5,0.8,0.9), c(1,0.2,0.7),c(3,0.7,1)),  SigmaB = matrix(c(1,0.5,0.7,
-                                                                                        0.5,1,0.8,
-                                                                                        0.7,0.8,1),nc = 3))
-## Covariancia Tri-variada --> Dados Independentes
-CovSimpler(dist.matrix = U, cov.model = c("exp", "matern", "gaussian"), 
-           cov.pars = list(c(1,0.2), c(1,0.2,0.5), c(1,0.5)), 
-           SigmaB = diag(3))
+## Covariancia Tri-variada: correlações diferentes
+cov.model = c("gaussian", "matern", "cauchy")
+cov.pars = list(c(1,0.7), c(2,0.21,0.7),c(3,0.22,0.7))
 
-## Covariancia Bi-variada --> modelo para dados separáveis 
-## (mesma estrutura de correlação: phi1=phi2, v1=v2 (matern))
-CovSimpler(dist.matrix = U, cov.model = c("matern", "matern"), 
-           cov.pars = list(c(1,0.2,0.5), c(2,0.2,0.5)), 
-           SigmaB = matrix(c(1,0.9,
-                             0.9,1),nc = 2))
-
+CovSimpler(dist.matrix = U, cov.model = cov.model, p = 3,
+           cov.pars = cov.pars,  SigmaB = matrix(c(1,0.5,0.7,
+                                                   0.5,1,0.8,
+                                                   0.7,0.8,1),nc = 3))

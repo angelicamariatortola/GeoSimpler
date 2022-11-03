@@ -16,6 +16,7 @@ loglikSimpler <- function(dist.matrix, cov.model, cov.pars, data, SigmaB = NA)
   ## cov.pars --> lista de vetores, onde cada vetor é relacionado aos parametros de cada modelo
   ## SigmaB --> (opcional) matriz de correlação de dimensão pxp, necessária se p=length(cov.model) > 1
   
+  ###INCOMPLETA
   
   ##-- Time
   time_start <- Sys.time()

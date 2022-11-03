@@ -1,6 +1,6 @@
 
 ## Para carregar as funções do pacote:
-setwd("/media/angelica/HD/Pesquisa/Projetos/Modelagem de dados espaciais multivariados/GeoSimpler package/GeoSimpler")
+setwd("/home/angelica/Dropbox/GeoSimpler package/GeoSimpler")
 
 library(devtools)
 document()

@@ -12,7 +12,7 @@
 #' 
 #' @export
 #' 
-CovSimpler <- function(dist.matrix, cov.model, cov.pars, SigmaB = NULL)
+CovSimpler <- function(dist.matrix, cov.model, cov.pars, p, SigmaB = NULL)
 {
   #### Função para uso externo
   ### Considerando que todas as variáveis foram observadas nas mesmas locações amostrais
@@ -66,10 +66,7 @@ CovSimpler <- function(dist.matrix, cov.model, cov.pars, SigmaB = NULL)
   # {stop("the number of rows and columns of SigmaB must be equal 
   #       to the length of cov.model", call. = F)} 
   
-  
   n <- nrow(dist.matrix) ## número de locações amostrais
-  p <- length(cov.model) ## número de variáveis
-  
   
   ## todos os modelos tem o numero correto de parâmetros
   # lapply(1:p, function(x) 
@@ -90,7 +87,7 @@ CovSimpler <- function(dist.matrix, cov.model, cov.pars, SigmaB = NULL)
   
   
   ## Marginal-covariance (univariate)
-  if(ncov.model==1 && (p == 1))
+  if(length(cov.model)==1 && (p == 1))
   {
     pars_uni <- unlist(cov.pars)
     Sigma <- cov_marg(dist.matrix = dist.matrix, cov.model = cov.model[1],
@@ -98,17 +95,41 @@ CovSimpler <- function(dist.matrix, cov.model, cov.pars, SigmaB = NULL)
     return(Sigma)
   }
   
-  ## Cross-covariance (multivariate --> p>1) 
-  ## Modelos marginais de correlação podem ser iguais ou não (a variancia pode ser diferente)
+  if(length(cov.model)==1 && (p > 1)) ## ncol(data) > 1
+  {
+    ## Multivariate scenario, com o mesmo modelo de covariância para todas as respostas
+    ## --> ncov.model==1 && (ncol(data) > 1)
+    ## SigmaB != NULL
+    
+    ## calcula a cholesky das matrizes de covariancia marginais para as p variáveis
+    ct_uni <- Matrix::chol(cov_marg(dist.matrix = dist.matrix, 
+                           cov.model = cov.model, 
+                           cov.pars.uni = unlist(cov.pars)))
+    ## Atribuindo a mesma ct_uni para todas as respostas
+    ct <- lapply(1:p, function(x) {ct_uni}) 
+    
+    cros1 <- Matrix::crossprod(Matrix::bdiag(ct), kronecker(SigmaB, Matrix::Diagonal(n)))
+    Sigma <- Matrix::tcrossprod(cros1, Matrix::t(Matrix::bdiag(ct)))
+    Sigma <- as.matrix(Sigma)
+    return(Sigma)
+  }
   
-  ## calcula a cholesky das matrizes de covariancia marginais para as p variáveis
-  ct <- lapply(1:p, function(x) {Matrix::chol(cov_marg(dist.matrix = dist.matrix, 
-               cov.model = cov.model[x], 
-               cov.pars.uni = cov.pars[[x]]))})
-  
-  cros1 <- Matrix::crossprod(Matrix::bdiag(ct), kronecker(SigmaB, Matrix::Diagonal(n)))
-  Sigma <- Matrix::tcrossprod(cros1, Matrix::t(Matrix::bdiag(ct)))
-  Sigma <- as.matrix(Sigma)
-  
-  return(Sigma)
+  if((length(cov.model) > 1) && (p > 1) && (length(cov.model) == p)) ## ncol(data) > 1
+  {
+    ## Multivariate scenario, com modelos distintos de covariância para as respostas
+    ## --> ncov.model > 1 && (ncol(data) > 1)
+    ## SigmaB != NULL
+    
+    ## calcula a cholesky das matrizes de covariancia marginais para as p variáveis
+    ct <- lapply(1:p, function(x) {Matrix::chol(cov_marg(dist.matrix = dist.matrix, 
+                                                         cov.model = cov.model[x], 
+                                                         cov.pars.uni = cov.pars[[x]]))})
+    
+    cros1 <- Matrix::crossprod(Matrix::bdiag(ct), kronecker(SigmaB, Matrix::Diagonal(n)))
+    Sigma <- Matrix::tcrossprod(cros1, Matrix::t(Matrix::bdiag(ct)))
+    Sigma <- as.matrix(Sigma)
+    
+    return(Sigma)
+  }
+  return("error: wrong model specification")
 }

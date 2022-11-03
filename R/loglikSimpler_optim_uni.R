@@ -11,6 +11,7 @@ loglikSimpler_optim_uni <- function(par, data, dist.matrix, cov.model, nloc,
 {
   ## função de uso interno
   ## Univariate scenario --> ncov.model==1 && (ncol(data) == 1)
+  ## SigmaB == NULL
   
   ## par --> vetor com todos os parametros.
   # Ex: c(param_var1)
