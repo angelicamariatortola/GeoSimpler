@@ -5,11 +5,13 @@
 \title{Calculates the log-likelihood value for the Simpler Model}
 \usage{
 loglikSimpler_optim_uni(
-  par,
+  ini.par,
   data,
   dist.matrix,
   cov.model,
   nloc,
+  v.nugget = F,
+  mean = 0,
   logpars = FALSE
 )
 }

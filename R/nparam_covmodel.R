@@ -8,9 +8,6 @@ nparam_covmodel <- function(cov.model)
 {
   #### Função para uso interno
   
-  modelos_param <- list(modelo = c("matern", "exp", "gaussian", "cauchy"),
-                        np = c(3, 2, 2, 3))
-  
   np_corr <- NULL
   if(length(cov.model) > 1)
   {
@@ -20,8 +17,20 @@ nparam_covmodel <- function(cov.model)
   np_marg <- c()
   for(i in 1:length(cov.model))
     {
-      np_marg[i] <- modelos_param$np[which(cov.model[i] == modelos_param$modelo)]
-  }
+      if(cov.model[i] %in% c("gencauchy", "gneiting.matern"))
+      {
+        np_marg[i] <- 4
+      }
+      if(cov.model[i] %in% c("matern", "cauchy", "powered.exponential"))
+      {
+        np_marg[i] <- 3
+      }
+      if(!cov.model[i] %in% c("matern", "cauchy", "powered.exponential",
+                              "gencauchy", "gneiting.matern"))
+      {
+        np_marg[i] <- 2
+      }
+    }
   
   nparam <- c(np_marg, np_corr)
   return(nparam)

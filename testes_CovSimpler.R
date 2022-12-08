@@ -2,8 +2,8 @@
 rm(list = ls())
 
 # Generating the coordinates:
-x1 <- seq(0,1, l = 2)
-x2 <- seq(0,1, l = 2)
+x1 <- seq(0,1, l = 5)
+x2 <- seq(0,1, l = 5)
 coord <- cbind(x1,x2)
 nrow(coord)
 
@@ -14,27 +14,33 @@ U <- as.matrix(dist(coord, diag = TRUE, upper = TRUE))
 #### Testes função CovSimpler
 
 # ## Covariancia univariada: length(cov.model)==1 && (p == 1)
-cov_marg(dist.matrix = U, cov.model = "matern",
-         cov.pars.uni = c(2,0.2,0.7))
+# cov_marg(dist.matrix = U, cov.model = "matern",
+#          cov.pars.uni = c(2,0.2,0.7))
 
-CovSimpler(dist.matrix = U, cov.model = "matern",
-           cov.pars = list(c(2,0.2,0.7)), p=1)
+# CovSimpler(dist.matrix = U, cov.model = "matern",
+#            cov.pars = list(c(2,0.2,0.7)), p=1, nugget = 2)
 
  
 # ## Covariancia Bivariada: mesma correlação para variáveis diferentes
-cov.model = c("matern")
-CovSimpler(dist.matrix = U, cov.model = cov.model,
-           cov.pars = list(c(1,0.2,0.7)), 
-           SigmaB = matrix(c(1,0.9,
-                             0.9,1),nc = 2), p = 2)
+# cov.model = c("matern")
+# CovSimpler(dist.matrix = U, cov.model = cov.model,
+#            cov.pars = list(c(1,0.2,0.7)),
+#            SigmaB = matrix(c(1,0.9,
+#                              0.9,1),nc = 2), p = 2)
 
 
 # ## Covariancia Bivariada: correlações diferentes
 cov.model = c("matern", "matern")
+
+# dist.matrix = U; cov.model = cov.model;
+# cov.pars = list(c(1,0.2,0.7),c(3,0.2,0.701));
+# SigmaB = matrix(c(1,0.9,
+#                   0.9,1),nc = 2); p =2
+
 CovSimpler(dist.matrix = U, cov.model = cov.model,
            cov.pars = list(c(1,0.2,0.7),c(3,0.2,0.701)), 
            SigmaB = matrix(c(1,0.9,
-                             0.9,1),nc = 2), p =2)
+                             0.9,1),nc = 2), p =2, nugget = c(1,2))
 
 
 ## Covariancia Tri-variada: mesma correlação para variáveis diferentes    

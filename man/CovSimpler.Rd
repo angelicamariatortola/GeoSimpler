@@ -4,7 +4,7 @@
 \alias{CovSimpler}
 \title{Calculates Value of the Simpler Covariance Function}
 \usage{
-CovSimpler(dist.matrix, cov.model, cov.pars, p, SigmaB = NULL)
+CovSimpler(dist.matrix, cov.model, cov.pars, p, nugget = NULL, SigmaB = NULL)
 }
 \description{
 Computes the Simpler covariance function associated to a p-dimensional

@@ -10,9 +10,9 @@
 cov_marg <- function(dist.matrix, cov.model, cov.pars.uni)
 {
   #### Função para uso interno
-  ## calcula matrix de correlação univariada
-  ## modelo --> exp, gaussian, matern, cauchy
-  ## cov.pars.uni --> vetor de parâmetros univariado c(sig2, phi, kappa) - modelo Matern
+  ## calcula matrix de covariância univariada
+  ## cov.model --> modelos de correlação da função geoR::cov.spatial
+  ## cov.pars.uni --> vetor com os parâmetros da covariancia univariada: c(sig2, phi, kappa) - modelo Matern
   
   if(cov.model %in% c("matern", "powered.exponential", 
                       "cauchy", "gencauchy", "gneiting.matern"))
@@ -20,10 +20,11 @@ cov_marg <- function(dist.matrix, cov.model, cov.pars.uni)
    cov_fun <- geoR::cov.spatial(obj = dist.matrix, cov.model = cov.model,
                 cov.pars = cov.pars.uni[1:2],
                 kappa = cov.pars.uni[3:length(cov.pars.uni)])
+  }else
+  {
+    cov_fun <- geoR::cov.spatial(obj = dist.matrix, cov.model = cov.model,
+                                 cov.pars = cov.pars.uni)
   }
-
-  cov_fun <- geoR::cov.spatial(obj = dist.matrix, cov.model = cov.model,
-                         cov.pars = cov.pars.uni)
 
   return(cov_fun)
 }

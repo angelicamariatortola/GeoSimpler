@@ -6,6 +6,7 @@ library(devtools)
 document()
 load_all()
 
+
 ## para selecionar vários itens que serão comitados para o git no RStudio
 # clicar na área git
 # Ctrl + A --> seleciona tudo

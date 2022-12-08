@@ -44,7 +44,8 @@ loglikSimpler_optim_multicov_pmulti <- function(par, data, dist.matrix, p,
   Sigma_log_sum_chol_diag <- sum(log(sapply(1:p, function(x){spam::diag(chol_cov[[x]])})))
 
   ## Transpose product of y and bdiag
-  prod_y_bdiag <- crossprod(data, bdiag(Sigma_inv_chol_cov))
+  y <- as.numeric(data)
+  prod_y_bdiag <- crossprod(y, bdiag(Sigma_inv_chol_cov))
   ## = t(y)%*%bdiag(Sigma_inv_chol),
   # where bdiag(Sigma_inv_chol) is upper triangular
   
