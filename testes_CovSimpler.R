@@ -8,7 +8,19 @@ coord <- cbind(x1,x2)
 nrow(coord)
 
 # Building the distance matrix:
-U <- as.matrix(dist(coord, diag = TRUE, upper = TRUE))
+U <- dist(coord)
+
+dists.lowertri = U; nugget = 0;
+coords = NULL
+cov.model = "exponential"; 
+cov.pars.uni = c(1,0.2); log.det.chol = FALSE;
+inv.chol = FALSE
+
+
+
+cov1 <- cov_marg(dists.lowertri = U, nugget = 0,
+  cov.model = "exponential", cov.pars.uni = c(1,0.2), log.det.chol = FALSE,
+  inv.chol = FALSE)
 
 
 #### Testes função CovSimpler
@@ -17,30 +29,29 @@ U <- as.matrix(dist(coord, diag = TRUE, upper = TRUE))
 # cov_marg(dist.matrix = U, cov.model = "matern",
 #          cov.pars.uni = c(2,0.2,0.7))
 
-# CovSimpler(dist.matrix = U, cov.model = "matern",
-#            cov.pars = list(c(2,0.2,0.7)), p=1, nugget = 2)
+CovSimpler(dist.matrix = U, cov.model = "gaussian",
+           cov.pars = list(c(2,0.5)), nugget = 6, p=1)
 
- 
+#(dist.matrix, cov.model, cov.pars, p, nugget = 0, SigmaB = NULL)
+
 # ## Covariancia Bivariada: mesma correlação para variáveis diferentes
-# cov.model = c("matern")
-# CovSimpler(dist.matrix = U, cov.model = cov.model,
-#            cov.pars = list(c(1,0.2,0.7)),
-#            SigmaB = matrix(c(1,0.9,
-#                              0.9,1),nc = 2), p = 2)
+cov.model = c("matern")
+CovSimpler(dist.matrix = U, cov.model = cov.model,
+           cov.pars = list(c(1,0.7,0.7)),
+           SigmaB = matrix(c(1,0.9,
+                             0.9,1),nc = 2), nugget = 2, p = 2)
 
 
 # ## Covariancia Bivariada: correlações diferentes
 cov.model = c("matern", "matern")
 
-# dist.matrix = U; cov.model = cov.model;
-# cov.pars = list(c(1,0.2,0.7),c(3,0.2,0.701));
-# SigmaB = matrix(c(1,0.9,
-#                   0.9,1),nc = 2); p =2
-
 CovSimpler(dist.matrix = U, cov.model = cov.model,
-           cov.pars = list(c(1,0.2,0.7),c(3,0.2,0.701)), 
+           cov.pars = list(c(1,0,0.7),c(3,0.7,0.701)), 
            SigmaB = matrix(c(1,0.9,
                              0.9,1),nc = 2), p =2, nugget = c(1,2))
+
+
+
 
 
 ## Covariancia Tri-variada: mesma correlação para variáveis diferentes    

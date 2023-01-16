@@ -4,7 +4,15 @@
 \alias{cov_marg}
 \title{Calculates Value of the Marginal-Correlation Function}
 \usage{
-cov_marg(dist.matrix, cov.model, cov.pars.uni)
+cov_marg(
+  coords = NULL,
+  dists.lowertri = NULL,
+  nugget,
+  cov.model,
+  cov.pars.uni,
+  log.det.chol = FALSE,
+  inv.chol = FALSE
+)
 }
 \description{
 Computes a marginal-correlation function,

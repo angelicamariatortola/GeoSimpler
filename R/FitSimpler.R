@@ -6,10 +6,10 @@
 #' multivariate Gaussian random field.
 #' 
 #' @importFrom Matrix chol solve diag crossprod tcrossprod bdiag
-FitSimpler <- function(data, dist.matrix, cov.model, ini.cov.pars, 
-                       SigmaB = NULL, method, hessian, logpars)
+FitSimpler <- function(ini.cov.pars, data, dist.matrix, cov.model, 
+                       SigmaB = NULL, v.nugget = F, mean = 0, 
+                       method, hessian, logpars)
 {
-  
   ### Considerando que todas as variáveis foram observadas nas mesmas locações amostrais
   ## cov.model --> vetor de strings contendo os modelos para cada variável
   ## SigmaB --> (necessária se p>1) matriz de correlação de dimensão pxp
@@ -35,16 +35,14 @@ FitSimpler <- function(data, dist.matrix, cov.model, ini.cov.pars,
     
   }
 
-
-  
   if(ncov.model == 1)
   {
     if(p == 1)
     {
       # Univariado
-      ini_par <- unlist(ini.cov.pars)
+      ini.par <- unlist(ini.cov.pars)
       
-      time_Simpler <- system.time(est_Simpler <- try(optim(par = ini_par,
+      time_Simpler <- system.time(est_Simpler <- try(optim(par = ini.par,
                                  fn = loglikSimpler_optim_uni, data = data, 
                                  dist.matrix = dist.matrix, nloc = nloc,
                                  cov.model = cov.model, logpars = logpars, 
@@ -81,7 +79,8 @@ FitSimpler <- function(data, dist.matrix, cov.model, ini.cov.pars,
     }else{stop("error: wrong model specification")}
   }
 
-  fits_pars <- est_FitSimpler(est_pars = est_Simpler, p = p, ncov.model = ncov.model)
+  # fits_pars <- est_FitSimpler(est_pars = est_Simpler, p = p, ncov.model = ncov.model)
+  
   
   out <- list(nloc = nloc, p = p,
               elapstime = as.numeric(time_Simpler[3]),
@@ -89,8 +88,11 @@ FitSimpler <- function(data, dist.matrix, cov.model, ini.cov.pars,
               method = method,
               hessian = hessian, 
               logpars = logpars,
+              nparam = length(est_Simpler$par),
+              est_ll_value = est_Simpler$value,
+              v.nugget = v.nugget)
               #sd = sd,
-              est_pars = fits_pars)
+              #est_pars = fits_pars)
   
   class(out) <- "FitSimpler"
   return(out)

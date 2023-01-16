@@ -5,11 +5,13 @@
 \title{Calculates the log-likelihood value for the Simpler Model}
 \usage{
 FitSimpler(
+  ini.cov.pars,
   data,
   dist.matrix,
   cov.model,
-  ini.cov.pars,
   SigmaB = NULL,
+  v.nugget = F,
+  mean = 0,
   method,
   hessian,
   logpars

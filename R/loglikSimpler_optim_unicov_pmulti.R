@@ -10,7 +10,7 @@ loglikSimpler_optim_unicov_pmulti <- function(par, data, dist.matrix, p,
                                               cov.model, nloc, nparam,
                                  logpars = logpars)
 {
-  ## função de uso interno
+  ## função de uso interno -  chamada em FitSimpler
   ## Multivariate scenario, com o mesmo modelo de covariância para todas as respostas
   ## --> ncov.model==1 && (ncol(data) > 1)
   ## SigmaB != NULL

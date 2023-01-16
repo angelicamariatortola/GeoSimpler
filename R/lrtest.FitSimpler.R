@@ -9,14 +9,12 @@ lrtest.FitSimpler <- function(fullmodel, reducedmodel)
   # e o número de parâmetros do modelo
   ## reducedmodel --> lista ou vetor (do modelo reduzido) com o valor da log verossimilhança 
   # e o número de parâmetros do modelo
-  
-  reducedmodel_vec <- as.numeric(reducedmodel)
-  fullmodel_vec <- as.numeric(fullmodel)
+  # inherits
   
   method <- "Ratio likelihood test"
   
-  x1 <- -2*(reducedmodel_vec[1] - fullmodel_vec[1])
-  df <- fullmodel_vec[2]-reducedmodel_vec[2]
+  x1 <- -2*(reducedmodel$est_ll_value - fullmodel$est_ll_value)
+  df <- fullmodel$nparam -reducedmodel$nparam
   p_value <- pchisq(x1, df, lower.tail = F)
 
   results <- list(x1 = x1, df = df, p_value = p_value)

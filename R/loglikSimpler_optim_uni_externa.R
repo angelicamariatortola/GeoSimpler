@@ -6,18 +6,24 @@
 #' multivariate Gaussian random field.
 #' 
 #' @importFrom mvtnorm dmvnorm
-loglikSimpler_optim_uni <- function(data, dist.matrix, cov.pars.vec, nloc,
+loglikSimpler_optim_uni <- function(data, coords, dist.matrix, cov.pars, nloc,
                                     cov.model, nugget = 0, compute.dists = TRUE)
 {
-  ## função de uso interno!! Função a ser chamada em FitSimpler
-  
+  ## função de uso interno
   ## Univariate scenario --> ncov.model==1 && (ncol(data) == 1)
-  ## cov.pars.vec --> vetor com todos os parametros da matriz de Covariância - CovSimpler.
-  # Ex: modelo Exp --> cov.pars.vec = c(var, phi),
+  
+  ## ini.par --> vetor com todos os parametros.
+  # Ex: modelo Exp --> se nugget = T --> par = c(nugget, var, phi),
+  # senão --> par = c(var, phi)
   ## cov.model --> vetor de string contendo o modelo da variável
-  ## nloc --> número de locações amostrais (calcula antes de entrar nessa função)
+  ## nloc --> número de locações amostrais
   ## data --> vetor de valores da resposta y, que deve ter dimensão length = nloc (univariado)
+  ## coords --> coordenadas dos dados: matrix nloc x 2
   ## dist.matrix --> matriz de distâncias euclidianas
+  ## entrar com coords ou com dist.matrix
+  ## compute.dists --> se as distancias devem ser calculadas ou não. 
+  ## Se T o argumento coords deve ser dado
+  # nloc <- nrow(data) --> calcular antes de entrar na função
   
   realisations <- as.factor(rep(1, length(data)))
   

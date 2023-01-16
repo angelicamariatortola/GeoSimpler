@@ -4,7 +4,23 @@
 \alias{CovSimpler}
 \title{Calculates Value of the Simpler Covariance Function}
 \usage{
-CovSimpler(dist.matrix, cov.model, cov.pars, p, nugget = NULL, SigmaB = NULL)
+CovSimpler(
+  coords = NULL,
+  dists.lowertri = NULL,
+  cov.model,
+  cov.pars,
+  p,
+  nugget = 0,
+  chol.varcov = FALSE,
+  SigmaB = NULL
+)
+}
+\arguments{
+\item{varcov}{the covariance matrix.}
+
+\item{log.det.chol.varcov}{the logarithmic determinant of the Cholesky decomposition of the covariance matrix.}
+
+\item{func.decomp}{algorithm used for the decomposition of the covariance matrix in determinant calculation.}
 }
 \description{
 Computes the Simpler covariance function associated to a p-dimensional

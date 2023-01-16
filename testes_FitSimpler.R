@@ -31,13 +31,16 @@ y <- matrix(as.numeric(mvnfast::rmvn(n = 1, mu = rep(0, p*nloc),
 # “exponential”, “gaussian”, “spherical”, “circular”, “cubic”, 
 # “wave”, “linear”, “power”, “stable”, “gneiting”, “pure.nugget”  --> nparam = 2
 
-# data = y, dist.matrix = U, SigmaB = SigmaB,
-# cov.model = cov.model, cov.pars = cov.pars1,
-# method = "Nelder-Mead", hessian = F, logpars = F
+data = y; dist.matrix = U; SigmaB = SigmaB;
+cov.model = cov.model; cov.pars = cov.pars1
+method = "Nelder-Mead"; hessian = F; logpars = F
 
-est_multi1 <- FitSimpler(data = y, dist.matrix = U, SigmaB = SigmaB,
-                         cov.model = cov.model, cov.pars = cov.pars1,
+est_multi1 <- FitSimpler(ini.cov.pars = cov.pars1, data = y, dist.matrix = U, 
+                         SigmaB = SigmaB, cov.model = cov.model, v.nugget = F, mean = 0, 
                          method = "Nelder-Mead", hessian = F, logpars = F)
+
+
+
 print(est_multi1)
 summary(est_multi1)
 

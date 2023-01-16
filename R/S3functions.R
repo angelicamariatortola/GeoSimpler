@@ -12,71 +12,97 @@ print.FitSimpler <- function(x, ...)
   cat("number of locations:", x$nloc,"\n")
   cat("number of response variables:", x$p,"\n")
   cat("cov.model:", x$cov.model,"\n")
+  cat("log-likelihood:", x$est_ll_value,"\n")
   
   ncov.model <- length(x$cov.model) ## número de variáveis
   nparam <- nparam_covmodel(x$cov.model)
   
   if(ncov.model == 1)
   {
-    cat("var: ", est_round[1],"\n")
-    cat("phi: ", est_round[2],"\n")
-    
-    # univariado --> p = 1
-    if(x$cov.model %in% c("matern", "cauchy", "powered.exponential"))
-    {
-      cat("kappa: ", est_round[3],"\n")
-    }
-    if(x$cov.model %in% c("gencauchy", "gneiting.matern"))
-    {
-      cat("kappa1: ", est_round[3],"\n")
-      cat("kappa2: ", est_round[4],"\n")
-    }
-    
-    if(x$p > 1)
-    { # multivariado --> p > 1 : considera o mesmo modelo para todas as respostas
-      ncomb <- paste(combn(x$p,2)[1,], combn(x$p,2)[2,], sep = "")
-      est_rho <- est_round[(nparam+1):length(est_round)]
-      
-      for (i in 1:length(ncomb)) 
+    if(x$p == 1)
+    { # univariado
+      if(x$v.nugget == T)
       {
-        cat(paste("rho", ncomb[i], ": ", est_rho, sep = ""),"\n")
+        cat("nugget: ", est_round[1],"\n")
+        cat("var: ", est_round[2],"\n")
+        cat("phi: ", est_round[3],"\n")
+      } else
+      { # x$v.nugget == F
+        cat("var: ", est_round[1],"\n")
+        cat("phi: ", est_round[2],"\n")
       }
-    }
-  } else # ncov.model > 1 e ncov.model = p --> modelos diferentes para as respostas
-  {
-    est_list <- split(est_round, rep(1:length(nparam), nparam))
-    
-    for (i in 1:x$p) 
-    {
-      if(x$cov.model[i] %in% c("matern", "cauchy", "powered.exponential"))
-      {
-        cat(paste("var", i, ": ", est_list[[i]][1], sep = ""),"\n")
-        cat(paste("phi", i, ": ", est_list[[i]][2], sep = ""),"\n")
-        cat(paste("kappa", i, ": ", est_list[[i]][3], sep = ""),"\n")
-      }
-      if(x$cov.model[i] %in% c("gencauchy", "gneiting.matern"))
-      {
-        cat(paste("var", i, ": ", est_list[[i]][1], sep = ""),"\n")
-        cat(paste("phi", i, ": ", est_list[[i]][2], sep = ""),"\n")
-        cat(paste("kappa1", i, ": ", est_list[[i]][3], sep = ""),"\n")
-        cat(paste("kappa2", i, ": ", est_list[[i]][4], sep = ""),"\n")
-      }
-      if(!x$cov.model[i] %in% c("matern", "cauchy", "powered.exponential",
-                                "gencauchy", "gneiting.matern"))
-      {
-        cat(paste("var", i, ": ", est_list[[i]][1], sep = ""),"\n")
-        cat(paste("phi", i, ": ", est_list[[i]][2], sep = ""),"\n")
-      }
-    }
-    
-    ncomb <- paste(combn(x$p,2)[1,], combn(x$p,2)[2,], sep = "")
-    
-    for (i in 1:length(ncomb)) 
-    {
-      cat(paste("rho", ncomb[i], ": ", 
-                est_list[[length(est_list)]][i], sep = ""),"\n")
-    }
+    } 
+    # else
+    # { # multivariado --> mesma covariância para todas as respostas
+    #   
+    # }
   }
+  
+
+    
+  
+  # if(ncov.model == 1)
+  # {
+  #   cat("var: ", est_round[1],"\n")
+  #   cat("phi: ", est_round[2],"\n")
+  #   
+  #   # univariado --> p = 1
+  #   if(x$cov.model %in% c("matern", "cauchy", "powered.exponential"))
+  #   {
+  #     cat("kappa: ", est_round[3],"\n")
+  #   }
+  #   if(x$cov.model %in% c("gencauchy", "gneiting.matern"))
+  #   {
+  #     cat("kappa1: ", est_round[3],"\n")
+  #     cat("kappa2: ", est_round[4],"\n")
+  #   }
+  # }
+  #   
+    # if(x$p > 1)
+    # { # multivariado --> p > 1 : considera o mesmo modelo para todas as respostas
+    #   ncomb <- paste(combn(x$p,2)[1,], combn(x$p,2)[2,], sep = "")
+    #   est_rho <- est_round[(nparam+1):length(est_round)]
+    #   
+    #   for (i in 1:length(ncomb)) 
+    #   {
+    #     cat(paste("rho", ncomb[i], ": ", est_rho, sep = ""),"\n")
+    #   }
+    # }
+  #} else # ncov.model > 1 e ncov.model = p --> modelos diferentes para as respostas
+  # {
+  #   est_list <- split(est_round, rep(1:length(nparam), nparam))
+  #   
+  #   for (i in 1:x$p) 
+  #   {
+  #     if(x$cov.model[i] %in% c("matern", "cauchy", "powered.exponential"))
+  #     {
+  #       cat(paste("var", i, ": ", est_list[[i]][1], sep = ""),"\n")
+  #       cat(paste("phi", i, ": ", est_list[[i]][2], sep = ""),"\n")
+  #       cat(paste("kappa", i, ": ", est_list[[i]][3], sep = ""),"\n")
+  #     }
+  #     if(x$cov.model[i] %in% c("gencauchy", "gneiting.matern"))
+  #     {
+  #       cat(paste("var", i, ": ", est_list[[i]][1], sep = ""),"\n")
+  #       cat(paste("phi", i, ": ", est_list[[i]][2], sep = ""),"\n")
+  #       cat(paste("kappa1", i, ": ", est_list[[i]][3], sep = ""),"\n")
+  #       cat(paste("kappa2", i, ": ", est_list[[i]][4], sep = ""),"\n")
+  #     }
+  #     if(!x$cov.model[i] %in% c("matern", "cauchy", "powered.exponential",
+  #                               "gencauchy", "gneiting.matern"))
+  #     {
+  #       cat(paste("var", i, ": ", est_list[[i]][1], sep = ""),"\n")
+  #       cat(paste("phi", i, ": ", est_list[[i]][2], sep = ""),"\n")
+  #     }
+  #   }
+  #   
+  #   ncomb <- paste(combn(x$p,2)[1,], combn(x$p,2)[2,], sep = "")
+  #   
+  #   for (i in 1:length(ncomb)) 
+  #   {
+  #     cat(paste("rho", ncomb[i], ": ", 
+  #               est_list[[length(est_list)]][i], sep = ""),"\n")
+  #   }
+  # }
 }
 
 
