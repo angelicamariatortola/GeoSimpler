@@ -4,7 +4,20 @@
 \alias{grfSimpler}
 \title{Simulation of Gaussian random fields with a Simpler Covariance Function}
 \usage{
-grfSimpler(n, nsim, cov.model, cov.pars, SigmaB = NULL)
+grfSimpler(
+  n,
+  coords = NULL,
+  nx,
+  ny,
+  xlims = c(0, 1),
+  ylims = c(0, 1),
+  nsim = 1,
+  cov.model = "exp",
+  cov.pars,
+  nugget = rep(0, length(cov.model)),
+  p = 1,
+  SigmaB = NULL
+)
 }
 \description{
 Simulation of Gaussian random fields with a Simpler Covariance Function

@@ -2,32 +2,43 @@
 rm(list = ls())
 
 # Generating the coordinates:
-x1 <- seq(0,1, l = 5)
-x2 <- seq(0,1, l = 5)
+x1 <- seq(0,1, l = 1000)
+x2 <- seq(0,1, l = 1000)
 coord <- cbind(x1,x2)
-nrow(coord)
 
 # Building the distance matrix:
-U <- as.matrix(dist(coord, diag = TRUE, upper = TRUE))
+U <- dist(coord)
 
-# p = 2
-cov.model = "exp"
-nugget = 2
-cov.pars1 = c(0.5, 0.3)
-nloc = nrow(U)
-SigmaB =  NULL #matrix(c(1,0.9, 0.9, 1), nc = 2)
+cov.model = "matern" #c("exp", "matern")
+cov.pars = list(c(5, 0.3, 0.9)) # list(c(0.5, 0.15), c(0.2, 0.08, 0.7)) # para modelos exp, gaussian, etc.
+SigmaB =  NULL #matrix(c(1, 0.9, 0.9, 1), nc = 2);
+nugget = 10 # c(1,1)
 p = 1
-# Simulating data
-Sigma2 <- CovSimpler(dist.matrix = U, cov.model = cov.model, nugget = nugget,
-                     cov.pars = cov.pars1, SigmaB = SigmaB, p = p)
+
+Sigma2 <- CovSimpler(coords = coord, nugget = nugget,
+                     cov.model = cov.model, cov.pars = cov.pars, p = p, 
+                     SigmaB = SigmaB) 
+
 set.seed(1234)
-y <- matrix(as.numeric(mvnfast::rmvn(n = 1, mu = rep(0, p*nloc),
-                                     sigma = Sigma2)), nc = p)
+y <- matrix(mvnfast::rmvn(n = 1, mu = rep(0, p*nrow(coord)),
+                          sigma = Sigma2$varcov), nc = p)
 
-ini.par = c(nugget, cov.pars1); data = y; mean = 2
-dist.matrix = U; cov.model = "exp"
-nloc = nloc; v.nugget = T; logpars = F
+# data = y; coords = coord; dists.lowertri = NULL
+# cov.model = cov.model;
+# cov.pars = cov.pars; est_mean = T;
+# SigmaB = SigmaB
+# 
+# 
+# trend = list("cte", "1st")
 
-loglikSimpler_optim_uni(ini.par = c( cov.pars1), data = y, mean = 2,
-                        dist.matrix = U, cov.model = "exp",
-                        nloc = nloc, v.nugget = F, logpars = F)
+system.time(loglik.GRF(coords = coord, data = y, cov.model = cov.model,
+           cov.pars = unlist(cov.pars)[1:2], kappa = unlist(cov.pars)[3], nugget = nugget,
+           trend = "1st"))
+
+system.time(loglikSimpler(data = y, coords = coord, trend = list("1st"),
+                         cov.model = cov.model, nugget = nugget,
+                         cov.pars = cov.pars, est_mean = T,
+                         SigmaB = SigmaB))
+ll$loglik
+
+ 

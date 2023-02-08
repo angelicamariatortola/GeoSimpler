@@ -1,4 +1,3 @@
-#' @export
 est_FitSimpler <- function(est, p, ncov.model, nparam, logpars, hessian){
   if(logpars && hessian)
   {

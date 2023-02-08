@@ -2,37 +2,40 @@
 rm(list = ls())
 
 # Generating the coordinates:
-x1 <- seq(0,1, l = 5)
-x2 <- seq(0,1, l = 5)
+x1 <- seq(0,1, l = 2)
+x2 <- seq(0,1, l = 2)
 coord <- cbind(x1,x2)
 nrow(coord)
 
 # Building the distance matrix:
 U <- dist(coord)
+U_mat = dist(coord, diag = T, upper = T)
+# dists.lowertri = U
+# coords = NULL
+# 
+p=1
+cov.model = c("matern") #, "matern"); 
+cov.pars = list(c(3,0.3,0.6)) #, c(3,0.3,0.6)); nugget = c(0,0);
+SigmaB <- NULL
+  # matrix(c(1,0.5,
+  #                  0.5,1),nc=2)
+# SigmaB <- matrix(c(1,0.3,0.5,
+#                    0.3,1,0.2,
+#                    0.5,0.2,1),nc=3)
 
-dists.lowertri = U; nugget = 0;
-coords = NULL
-cov.model = "exponential"; 
-cov.pars.uni = c(1,0.2); log.det.chol = FALSE;
-inv.chol = FALSE
+# param_check_break(cov.pars = cov.pars, cov.model = cov.model, p = p) 
+
+# s1 = CovSimpler(dists.lowertri = U, cov.model = cov.model, #nugget = nugget,
+#            cov.pars = cov.pars, p = 1, SigmaB = SigmaB) 
+CovSimpler(dists.lowertri = U, cov.model = cov.model, nugget = nugget,
+           cov.pars = cov.pars, p = p, SigmaB = SigmaB) 
 
 
 
-cov1 <- cov_marg(dists.lowertri = U, nugget = 0,
-  cov.model = "exponential", cov.pars.uni = c(1,0.2), log.det.chol = FALSE,
-  inv.chol = FALSE)
+
 
 
 #### Testes função CovSimpler
-
-# ## Covariancia univariada: length(cov.model)==1 && (p == 1)
-# cov_marg(dist.matrix = U, cov.model = "matern",
-#          cov.pars.uni = c(2,0.2,0.7))
-
-CovSimpler(dist.matrix = U, cov.model = "gaussian",
-           cov.pars = list(c(2,0.5)), nugget = 6, p=1)
-
-#(dist.matrix, cov.model, cov.pars, p, nugget = 0, SigmaB = NULL)
 
 # ## Covariancia Bivariada: mesma correlação para variáveis diferentes
 cov.model = c("matern")

@@ -14,8 +14,6 @@ load_all()
 
 ## 1 - Funcão do GeoSimpler  |  depende (função)        | depende (pacote)
 
-## cov_marg                 | cov.spatial                   | geoR
-
 ## CovSimpler                | crossprod                | Matrix
 ##                           | tcrossprod               | Matrix
 ##                           | t                        | Matrix
