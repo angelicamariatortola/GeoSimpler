@@ -10,9 +10,9 @@ loglikSimpler(
   dists.lowertri = NULL,
   cov.pars,
   cov.model,
-  nugget = 0,
+  nugget = rep(0, length(cov.model)),
   est_mean = F,
-  trend,
+  trend = rep("cte", length(cov.model)),
   SigmaB = NULL
 )
 }

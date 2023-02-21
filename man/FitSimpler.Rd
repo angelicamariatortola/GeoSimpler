@@ -7,14 +7,17 @@
 FitSimpler(
   ini.cov.pars,
   data,
-  dist.matrix,
+  coords,
   cov.model,
+  trend = rep("cte", length(cov.model)),
+  fix.nugget = FALSE,
+  nugget = rep(0, length(cov.model)),
+  fix.kappa = TRUE,
+  est_mean = F,
   SigmaB = NULL,
-  v.nugget = F,
-  mean = 0,
-  method,
-  hessian,
-  logpars
+  limits = pars.limits(),
+  print.pars = FALSE,
+  ...
 )
 }
 \description{

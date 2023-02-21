@@ -5,14 +5,17 @@
 #' 
 #' @importFrom matrixcalc is.positive.definite
 #' 
-grfSimpler <- function(n, coords = NULL, nx, ny, 
+grfSimpler <- function(n, coords = NULL, nx, ny,
                        xlims = c(0, 1), ylims = c(0, 1), nsim = 1, 
                        cov.model = "exp", cov.pars, nugget = rep(0, length(cov.model)),
-                       p = 1, SigmaB = NULL)
+                       p = 1,  mean = rep(0, p), SigmaB = NULL)
 {
   #### Função para uso externo
-  ### n --> numero de locações espaciais
+  
+  # nx optional. Number of points in the X direction.
+  # ny optional. Number of points in the Y direction.
   ## nsim --> número de simulações
+  
   ## cov.model --> vetor de strings contendo os modelos para cada variável
   ## cov.pars --> lista de vetores, onde cada vetor é relacionado aos parametros 
   #  de cada modelo
@@ -20,6 +23,7 @@ grfSimpler <- function(n, coords = NULL, nx, ny,
   #  necessária se p=length(cov.model) > 1
   ## considerando grid regular. O usuário entra com as coordenadas em forma de matriz ou não
   ## method = "cholesky"
+  # mean --> vetor de médias, uma para cada variável
   
   rseed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
   
@@ -67,9 +71,9 @@ grfSimpler <- function(n, coords = NULL, nx, ny,
     xpts <- seq(xlims[1], xlims[2], length = nx)
     ypts <- seq(ylims[1], ylims[2], length = ny)
     
-    # Amplitude entre as coordenadas x e entre as coordenadas y
-    xspacing <- ifelse(length(xpts) == 1, 0, diff(xpts[1:2]))
-    yspacing <- ifelse(length(ypts) == 1, 0, diff(ypts[1:2]))
+    # # Amplitude entre as coordenadas x e entre as coordenadas y
+    # xspacing <- ifelse(length(xpts) == 1, 0, diff(xpts[1:2]))
+    # yspacing <- ifelse(length(ypts) == 1, 0, diff(ypts[1:2]))
     
     # Criando o grid de locações 
     results$coords <- as.matrix(expand.grid(x = xpts, 
@@ -85,21 +89,25 @@ grfSimpler <- function(n, coords = NULL, nx, ny,
   
   n <- nrow(results$coords)
   
-  # Número de pontos distintos nas coordenadas
-  if (length(unique(round(results$coords[, 1], digits = 12))) ==  1 ||
-      length(unique(round(results$coords[, 2], digits = 12))) ==  1) 
-    {
-      sim1d <- TRUE
-    } else {sim1d <- FALSE}
+  # # Número de pontos distintos nas coordenadas
+  # if (length(unique(round(results$coords[, 1], digits = 12))) ==  1 ||
+  #     length(unique(round(results$coords[, 2], digits = 12))) ==  1) 
+  #   {
+  #     sim1d <- TRUE
+  #   } else {sim1d <- FALSE}
   
   Sigma_cov <- CovSimpler(coords = results$coords, nugget = nugget,
                     cov.model = cov.model, cov.pars = cov.pars, p = p, 
                     SigmaB = SigmaB) 
       
-  results$data <- drop(crossprod(chol(Sigma_cov$varcov), 
-                                     matrix(rnorm(n*p * nsim), nrow = n*p, ncol = nsim)))
-
+  z <- matrix(rnorm(n*p * nsim), nrow = n*p, ncol = nsim)
   
+  cholSz <- crossprod(chol(Sigma_cov$varcov), z) ## matriz de dimensão np x nsim
+
+  sim <- lapply(1:nsim, function(x){matrix(cholSz[,x], nc = p)}) # quebra cada simulação em p colunas (uma resposta em cada coluna)
+
+  results$data <- lapply(1:nsim, function(y){sapply(1:p, function(x){sim[[y]][,x] + mean[x]})})
+  names(results$data) <- paste("sim", 1:nsim, sep = "")
   
   results[c("cov.model", "nugget", "cov.pars", ".Random.seed")] <- 
     list(cov.model, nugget, cov.pars, rseed)

@@ -10,8 +10,8 @@
 #' @export
 #' 
 loglikSimpler <- function(data, coords = NULL, dists.lowertri = NULL, 
-                          cov.pars, cov.model, nugget = 0, est_mean = F,
-                          trend, SigmaB = NULL)
+                          cov.pars, cov.model, nugget = rep(0, length(cov.model)), 
+                          est_mean = F, trend = rep("cte", length(cov.model)), SigmaB = NULL)
 {
   ## função de uso externo!! 
   
@@ -183,7 +183,7 @@ loglikSimpler <- function(data, coords = NULL, dists.lowertri = NULL,
             D <- bdiag(xmat) # agrupa as matrizes de covariáveis em uma matriz bloco diagonal (bonat (2020))
             tD_invSigma <- as.matrix(crossprod(D, invSigma)) # # = tD %*% invSigma
             
-            betahat <- .solve.geoR(tD_invSigma%*%D, tD_invSigma%*%y)
+            betahat <- .solve.geoR(as.matrix(tD_invSigma%*%D), tD_invSigma%*%y)
             # = (tD %*% invSigma %*% D)^-1 %*% (tD %*% invSigma %*% D)
             
             betahat_est <- split(as.numeric(betahat), rep(1:length(beta.size), beta.size))

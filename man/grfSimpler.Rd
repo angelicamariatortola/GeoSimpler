@@ -16,6 +16,7 @@ grfSimpler(
   cov.pars,
   nugget = rep(0, length(cov.model)),
   p = 1,
+  mean = rep(0, p),
   SigmaB = NULL
 )
 }
