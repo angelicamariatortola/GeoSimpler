@@ -1,6 +1,7 @@
 
 ## Para carregar as funções do pacote:
-setwd("/home/angelica/Dropbox/GeoSimpler package/GeoSimpler")
+#setwd("/home/daest/Dropbox/GeoSimpler package/GeoSimpler/")
+setwd("~/Dropbox/GeoSimpler package/GeoSimpler")
 
 library(devtools)
 document()

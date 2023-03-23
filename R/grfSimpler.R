@@ -102,10 +102,16 @@ grfSimpler <- function(n, coords = NULL, nx, ny,
       
   z <- matrix(rnorm(n*p * nsim), nrow = n*p, ncol = nsim)
   
+  ## simulando os dados
   cholSz <- crossprod(chol(Sigma_cov$varcov), z) ## matriz de dimensão np x nsim
 
   sim <- lapply(1:nsim, function(x){matrix(cholSz[,x], nc = p)}) # quebra cada simulação em p colunas (uma resposta em cada coluna)
 
+  if(ncov.model == 1 && p > 1 && length(mean) == 1)
+  { 
+    mean <- rep(mean, p)
+  }
+  
   results$data <- lapply(1:nsim, function(y){sapply(1:p, function(x){sim[[y]][,x] + mean[x]})})
   names(results$data) <- paste("sim", 1:nsim, sep = "")
   

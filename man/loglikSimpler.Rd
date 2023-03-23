@@ -11,8 +11,8 @@ loglikSimpler(
   cov.pars,
   cov.model,
   nugget = rep(0, length(cov.model)),
-  est_mean = F,
-  trend = rep("cte", length(cov.model)),
+  fix.mean = T,
+  trend,
   SigmaB = NULL
 )
 }

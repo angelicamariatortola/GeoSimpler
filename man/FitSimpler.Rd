@@ -9,13 +9,13 @@ FitSimpler(
   data,
   coords,
   cov.model,
-  trend = rep("cte", length(cov.model)),
-  fix.nugget = FALSE,
-  nugget = rep(0, length(cov.model)),
+  trend,
+  fix.nugget = TRUE,
   fix.kappa = TRUE,
-  est_mean = F,
+  fix.mean = TRUE,
+  nugget = rep(0, length(cov.model)),
   SigmaB = NULL,
-  limits = pars.limits(),
+  limits = pars.limits2(),
   print.pars = FALSE,
   ...
 )
