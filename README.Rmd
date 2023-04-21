@@ -1,0 +1,31 @@
+---
+output: github_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+# GeoSimpler
+
+## Overview
+
+GeoSimpler: A Package for Multivariate Gaussian Geostatistical Data Analysis.
+
+## Installation
+
+```{r eval = FALSE}
+# Install from CRAN (when available)
+install.packages("GeoSimpler")
+# Or the development version from GitHub
+# install.packages("devtools")
+devtools::install_github("angelicamariatortola/GeoSimpler")
+```
+
+## Usage
+
+`library(GeoSimpler)` will load the package **GeoSimpler**. 

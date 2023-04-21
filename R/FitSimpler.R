@@ -62,8 +62,9 @@ FitSimpler <- function(ini.cov.pars, data, coords, cov.model, trend,
   ####################################
   
   fixed.pars <- list(cov.model = cov.model)
-  kappa <-  unlist(params$kappap)
-  
+  sigmas <- unlist(params$sigmap) # vetor de sigmas
+  phis <- unlist(params$phip) # vetor de phis
+
   if (fix.nugget)
     fixed.pars$nugget <- nugget
    # fixed.pars$nugget <- nugget[which(fix.nugget == T)]
@@ -695,6 +696,7 @@ if(ncov.model == 1)
   # calcula a cholesky p vezes
 
   # valores iniciais
+  kappas <- unlist(params$kappap) # vetor de kappas
   tausq <- nugget
   ini <- params$phip
   ini_rho <- SigmaB[lower.tri(SigmaB)]
@@ -702,17 +704,17 @@ if(ncov.model == 1)
   temp.list$nrhos <- nrhos
   
   fixed.values <- list()
-  lower.optim <- c(limits$phi["lower"])
-  upper.optim <- c(limits$phi["upper"])
+  lower.optim <- rep(c(limits$phi["lower"]), p)
+  upper.optim <- rep(c(limits$phi["upper"]), p)
   
   if (fix.nugget) {
     # não estima o nugget
     fixed.values$tausq <- nugget
   } else {
     # estima o nugget
-    ini <- c(ini, nugget/params$sigmap)
-    lower.optim <- c(lower.optim, limits$tausq.rel["lower"])
-    upper.optim <- c(upper.optim, limits$tausq.rel["upper"])
+    ini <- c(ini, nugget/sigmas)
+    lower.optim <- c(lower.optim, rep(limits$tausq.rel["lower"], length = length(nugget)))
+    upper.optim <- c(upper.optim, rep(limits$tausq.rel["upper"], length = length(nugget)))
   }
   
   if (fix.kappa) {
@@ -721,22 +723,16 @@ if(ncov.model == 1)
   } else 
   {
     # estima o kappa
-    ini <- c(ini, kappa)
-    lower.optim <- c(lower.optim, limits$kappa["lower"])
-    upper.optim <- c(upper.optim, limits$kappa["upper"])
+    ini <- c(ini, kappas)
+    lower.optim <- c(lower.optim, rep(limits$kappa["lower"], length = length(kappas)))
+    upper.optim <- c(upper.optim, rep(limits$kappa["upper"], length = length(kappas)))
   }
   
-  if (fix.nugget && nugget > 0)
-  {
-    # não estima o nugget, e estima o sigma
-    ini <- c(ini, params$sigmap)
-    lower.optim <- c(lower.optim, limits$sigmasq["lower"])
-    upper.optim <- c(upper.optim, limits$sigmasq["upper"])
-  }
-  
+  ini <- c(ini, sigmas)
+  lower.optim <- c(lower.optim, rep(limits$sigmasq["lower"], length = length(sigmas)))
+  upper.optim <- c(upper.optim, rep(limits$sigmasq["upper"], length = length(sigmas)))
   # se tau é fixo e igual a zero, ele estima o sigma2 usando a expressão do estimador de máxima verossimilhança: ssres/N
-  # se tau é fixo e igual a zero, ele estima o sigma2 usando a expressão do estimador de máxima verossimilhança: ssres/N
-  
+
   
   # estima os rhos
   ini <- c(ini, ini_rho)
@@ -766,39 +762,19 @@ if(ncov.model == 1)
   ip <- list(f.tausq = fix.nugget, f.kappa = fix.kappa)
   
   ## temp.list$loglik.cte --> termo constante da log-verossimilhança
-  npars <- sum(beta.size) + 2 + (sum(unlist(ip) == FALSE)) + nrhos # 2 de sigma e phi 
-  # nrhos retorna o número de rhos
+  npars <- sum(beta.size) + 2*p + (sum(unlist(ip) == FALSE)) + nrhos # 2 de sigma e phi para cada variável p
+  # npars --> número de parâmetros a serem estimados
+  # nrhos --> retorna o número de rhos
   
   ## Usando o método "ML"
-  if (ip$f.tausq && nugget > 0) # se não estima o nugget. Esse termo fica igual na loglik usual
-    temp.list$loglik.cte <- (-(temp.list$n*p)/2) * (log(2 * pi))  else 
-      # se tau é fixo e for zero ou se o tau não for fixo, ele usa sigma = 1 como valor inicial
-      # na função FitSimpler_aux que será usada no optim
-      temp.list$loglik.cte <- ((temp.list$n*p)/2) * (-log(2 * pi) + log(temp.list$n*p) - 1)
-  # aqui ou o tau será estimado, ou ele é fixado em zero, neste caso algumas coisas mudam na loglik
-  # o termo (np/2)*(log(temp.list$np) - 1), vem do termo -(1/2)(np log sigmasq + np) (model based geo - p. 112 - verossimilhança concentrada),
-  # pois sigmasq = ssres/np.
-  # logo, desenvolvendo -(1/2)(np log sigmasq + np), obtemos:
-  # -(1/2)(np log (ssres/np) + np) = -(1/2)(np log (ssres) - nplog(np) + np)
-  # Cujo termo constante é: (1/2)(nplog(np) - np)
-  
+  temp.list$loglik.cte <- -((temp.list$n*p)/2)*log(2 * pi) 
+ 
   likGRF.dists.vec <- lapply(split(as.data.frame(coords), 1), vecdist)
   range.dist <- range(likGRF.dists.vec)
   max.dist <- max(range.dist)
   min.dist <- min(range.dist)
   
-  if (length(ini) == 1)
-  {
-    if (upper.optim == Inf)
-      upper.optim <- 50 * max.dist
-    lik.minim <- do.call("optimize", c(list(FitSimpler_aux,
-                                            lower = lower.optim, upper = upper.optim, fp = fixed.values,
-                                            ip = ip, temp.list = temp.list), ldots))
-    lik.minim <- list(par = lik.minim$minimum, value = lik.minim$objective,
-                      convergence = 0, message = "function optimize used")
-  } else
-  {
-    MET <- pmatch(names(ldots), names(formals(optim)))
+  MET <- pmatch(names(ldots), names(formals(optim)))
     
     if(all(is.na(MET)) || all(names(formals(optim))[MET] != "method"))
       ldots$method <- "L-BFGS-B"
@@ -813,12 +789,12 @@ if(ncov.model == 1)
     }
     
     # FitSimpler_aux(pars = ini, fp = fixed.values, ip = ip, temp.list = temp.list)
-    # pars = ini
-    # fp = fixed.values;ip = ip;temp.list = temp.list
+    pars = ini
+    fp = fixed.values;ip = ip;temp.list = temp.list
     
     lik.minim <- do.call("optim", c(list(par = ini, fn = FitSimpler_aux, 
                                          fp = fixed.values, ip = ip, temp.list = temp.list), ldots))
-  }
+
   
   
   ## Atribuindo os parâmetros estimados:
