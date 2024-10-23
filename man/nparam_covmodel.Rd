@@ -17,9 +17,10 @@ Retorna uma lista contendo
 }
 \examples{
 library(geoR)
-# Número de parâmetros do modelo de covariância considerando uma resposta com distribuição Matern
+# Número de parâmetros do modelo de covariância CovSimpler considerando uma resposta com distribuição Matern
 nparam_covmodel("matern")
 
-# Número de parâmetros do modelo de covariância considerando uma resposta com distribuição Matern
-nparam_covmodel("matern")
+# Número de parâmetros do modelo de covariância CovSimpler considerando duas resposta com distribuições Exponential e Matern
+nparam_covmodel(c("exp","matern"))
+  
 }
