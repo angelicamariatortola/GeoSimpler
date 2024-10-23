@@ -1,5 +1,5 @@
 varcov.spatial2 <- function (coords = NULL, dists.lowertri = NULL, cov.model = "matern", 
-                             kappa = 0.5, nugget = 0, cov.pars = stop("no cov.pars argument"), 
+                             nugget = 0, cov.pars = stop("no cov.pars argument"), 
                              det = FALSE, scaled = FALSE, sqrt.inv = FALSE, ...) 
 {
   #### Função para uso interno
@@ -11,6 +11,8 @@ varcov.spatial2 <- function (coords = NULL, dists.lowertri = NULL, cov.model = "
   # log.det.to.half --> log do determinante da decomposição de cholesky de varcov log(det(chol(varcov)))
   # sqrt.inverse --> inversa da decomposição de cholesky de varcov
   
+  # Argumentos:
+  # cov.pars --> deve ser um vetor contendo c(sig2, phi, kappa (se houver))
   
   if (is.null(coords) & is.null(dists.lowertri)) 
     stop("one of the arguments, coords or dists.lowertri must be provided")
@@ -20,14 +22,20 @@ varcov.spatial2 <- function (coords = NULL, dists.lowertri = NULL, cov.model = "
     n <- nrow(coords)
   if (!is.null(dists.lowertri)) 
     n <- as.integer(round(0.5 * (1 + sqrt(1 + 8 * length(dists.lowertri)))))
+  
   tausq <- nugget
+  
   if (is.vector(cov.pars)) {
     sigmasq <- cov.pars[1]
     phi <- cov.pars[2]
+    if(length(cov.pars) > 2)
+    {
+      kappa <- cov.pars[3:length(cov.pars)]
+    }
   } else {
-    sigmasq <- cov.pars[, 1]
-    phi <- cov.pars[, 2]
+    stop("cov.pars must be a vector")
   }
+  
   if (!is.null(coords)) 
     dists.lowertri <- as.vector(dist(coords))
   if (round(1e+12 * min(dists.lowertri)) == 0) 
@@ -57,7 +65,7 @@ varcov.spatial2 <- function (coords = NULL, dists.lowertri = NULL, cov.model = "
     }
     else {
       covvec <- geoR::cov.spatial(obj = dists.lowertri, cov.model = cov.model, 
-                            kappa = kappa, cov.pars = cov.pars)
+                            kappa = kappa, cov.pars = c(sigmasq, phi))
       varcov[lower.tri(varcov)] <- covvec
       varcov <- t(varcov)
       varcov[lower.tri(varcov)] <- covvec

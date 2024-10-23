@@ -59,8 +59,7 @@ CovSimpler <- function(coords = NULL, dists.lowertri = NULL,
   
   ncov.model <- length(cov.model)
   Sigma_cov <- matrix(0, n*p, n*p)
-  params <- param_check_break(cov.pars = cov.pars, cov.model = cov.model, p = p)
-  
+   
   if (length(nugget) != ncov.model) 
     stop("the length of the nugget vector must be equal to the length of the cov.model vector")
   
@@ -69,9 +68,8 @@ CovSimpler <- function(coords = NULL, dists.lowertri = NULL,
     if(p == 1)
     {
       results <- varcov.spatial2(coords = coords, dists.lowertri = dists.lowertri,
-                        kappa = unlist(params$kappap), nugget = nugget,
-                        cov.model = cov.model, 
-                        cov.pars = c(params$sigmap, params$phip))
+                                 nugget = nugget, cov.model = cov.model, 
+                                 cov.pars = unlist(cov.pars))
         # usei varcov.spatial2, para retornar além da varcov a cholesky da varcov.
         # Opção que no varcov.spatial do geoR não consegui obter
       Sigma_cov <- results$varcov
@@ -81,9 +79,8 @@ CovSimpler <- function(coords = NULL, dists.lowertri = NULL,
     # entra com uma lista de 1 vetor de parâmetros, que é o mesmo para todas as variáveis.
   
       results <- varcov.spatial2(coords = coords, dists.lowertri = dists.lowertri,
-                                 kappa = unlist(params$kappap), nugget = nugget,
-                                 cov.model = cov.model, det = T, # det = T para calcular a cholesky
-                                 cov.pars = c(params$sigmap, params$phip))
+                                 nugget = nugget, cov.model = cov.model, det = T, # det = T para calcular a cholesky
+                                 cov.pars = unlist(cov.pars))
       ## results$sqrt.varcov --> decomposição de Cholesky de Sigma_cov
       ct <- lapply(1:p, function(x) {results$sqrt.varcov}) ## Atribuindo a mesma ct_uni para todas as respostas
       cros1 <- Matrix::crossprod(Matrix::bdiag(ct), kronecker(SigmaB, Matrix::Diagonal(n)))
@@ -99,9 +96,8 @@ CovSimpler <- function(coords = NULL, dists.lowertri = NULL,
       results <- lapply(1:ncov.model, function(x) 
       {
         varcov.spatial2(coords = coords, dists.lowertri = dists.lowertri, det = T,
-                        kappa = params$kappap[[x]], nugget = nugget[x],
-                        cov.model = cov.model[x], 
-                        cov.pars = c(params$sigmap[x], params$phip[x]))
+                        nugget = nugget[x], cov.model = cov.model[x], 
+                        cov.pars = unlist(cov.pars[[x]]))
         # usei varcov.spatial2, para retornar além da varcov a cholesky da varcov.
         # Opção que no varcov.spatial do geoR não consegui obter
       })
