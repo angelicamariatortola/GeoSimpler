@@ -120,3 +120,5 @@ grfSimpler <- function(n, coords = NULL, nx, ny,
   
   return(results)
 }
+
+# Apenas um comentário.
