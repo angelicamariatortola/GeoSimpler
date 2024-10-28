@@ -5,3 +5,7 @@
 GeoSimpler.Rcheck/
 GeoSimpler*.tar.gz
 GeoSimpler*.tgz
+.Rdata
+.httr-oauth
+.DS_Store
+.quarto
