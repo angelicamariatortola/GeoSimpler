@@ -1,0 +1,6 @@
+# It is a test. 
+# Eu inseri um novo arquivo usando o próprio github.
+
+sumfun <- function(a, b){
+a+b
+}
