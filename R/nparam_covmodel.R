@@ -4,7 +4,6 @@
 #' @description Retorna um vetor com o número de parâmetros de cada modelo
 #' da função cov.model e dos parâmetros da função de correlação SigmaB
 #' 
-#' @example 
 nparam_covmodel <- function(cov.model)
 {
   #### Função para uso interno
