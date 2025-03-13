@@ -2,25 +2,11 @@
 % Please edit documentation in R/nparam_covmodel.R
 \name{nparam_covmodel}
 \alias{nparam_covmodel}
-\title{Calculates o número de parâmetros do modelo CovSimpler}
+\title{Calculates o número de parâmetros no modelo}
 \usage{
-nparam_covmodel(model)
-}
-\arguments{
-\item{model}{vetor de modelos de função de correlação para cada resposta do modelo}
+nparam_covmodel(cov.model)
 }
 \description{
-Retorna um vetor com o número de parâmetros de cada modelo marginal e da função de correlação entre as respostas SigmaB, dados os modelos de correlação marginais das respostas
-}
-\details{
-Retorna uma lista contendo
-}
-\examples{
-library(geoR)
-# Número de parâmetros do modelo de covariância CovSimpler considerando uma resposta com distribuição Matern
-nparam_covmodel("matern")
-
-# Número de parâmetros do modelo de covariância CovSimpler considerando duas resposta com distribuições Exponential e Matern
-nparam_covmodel(c("exp","matern"))
-  
+Retorna um vetor com o número de parâmetros de cada modelo
+da função cov.model e dos parâmetros da função de correlação SigmaB
 }

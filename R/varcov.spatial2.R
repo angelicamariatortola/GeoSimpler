@@ -18,6 +18,7 @@ varcov.spatial2 <- function (coords = NULL, dists.lowertri = NULL, cov.model = "
     stop("one of the arguments, coords or dists.lowertri must be provided")
   if (!is.null(coords) & !is.null(dists.lowertri)) 
     stop("only ONE argument, either coords or dists.lowertri must be provided")
+  
   if (!is.null(coords)) 
     n <- nrow(coords)
   if (!is.null(dists.lowertri)) 
