@@ -115,4 +115,3 @@ CovSimpler <- function(coords = NULL, dists.lowertri = NULL,
   return(list(varcov = Sigma_cov))
 }
 
-## Fiz um comentário.
